@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "distributed-bayes-opt"
+version = "0.1.0"
+description = "Distributed Bayesian Optimization Framework via Advanced Stochastic Processes and Reinforcement Learning"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Shayan" }]
+keywords = [
+    "bayesian-optimization",
+    "gaussian-processes",
+    "reinforcement-learning",
+    "stochastic-processes",
+    "distributed-computing",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "torch>=2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+]
+
+[tool.setuptools]
+packages = { find = { where = ["."], include = ["src*"] } }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

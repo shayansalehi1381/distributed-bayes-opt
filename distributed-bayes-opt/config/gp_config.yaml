@@ -1,0 +1,58 @@
+# Gaussian Process Regression — default hyperparameters
+gp:
+  kernel:
+    type: rbf
+    lengthscale: 1.0        # isotropic init; set a list for ARD
+    signal_variance: 1.0
+  noise_variance: 1.0e-2
+  jitter: 1.0e-8
+  dtype: float64            # float32 kernel matrices are ill-conditioned
+
+training:
+  optimizer: adam
+  n_iters: 200
+  lr: 0.1
+
+prediction:
+  chunk_size: 2048          # test points per block; bounds memory at O(n * chunk)
+
+# Stochastic process sampling (src/sampling.py)
+sampling:
+  mcmc:                     # Metropolis-Hastings over GP hyperparameter posterior
+    n_chains: 4
+    n_samples: 200
+    burn_in: 300
+    step_size: 0.15         # adapted toward target_acceptance during burn-in
+    target_acceptance: 0.3
+    prior:                  # N(mean, std^2) on log lengthscales/variances
+      mean: 0.0
+      std: 1.5
+  langevin:                 # Euler-Maruyama / MALA
+    step_size: 1.0e-2
+    metropolis_adjust: true # true = MALA (exact), false = ULA (O(eps) bias)
+    grad_clip: 1.0e+3
+
+# Sparse GP / SVI (src/sparse_gp.py)
+sparse_gp:
+  n_inducing: 64            # M; greedy farthest-point init from training data
+  learn_inducing: true      # optimize Z jointly with kernel + variational params
+  jitter: 1.0e-6            # K_mm Cholesky stabilizer (escalates on failure)
+  dtype: float64            # required: K_mm conditioning degrades as Z clusters
+  collapsed:                # Titsias (2009) VFE, full-batch, O(n m^2)/iter
+    n_iters: 200
+    lr: 0.05
+  svi:                      # Hensman et al. (2013), O(B m^2 + m^3)/step
+    n_epochs: 30
+    batch_size: 512
+    lr: 0.05
+
+# Acquisition functions (src/acquisition.py)
+acquisition:
+  ei:
+    xi: 0.0                 # exploration offset
+  ucb:
+    beta: null              # null = dynamic Srinivas et al. schedule
+    delta: 0.1              # regret bound confidence
+    domain_size: 1000       # |D| in the beta_t schedule
+  thompson:
+    n_select: 1             # >1 = batch/parallel TS
