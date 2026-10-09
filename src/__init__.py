@@ -9,6 +9,12 @@ from src.sampling import (
     potential_scale_reduction,
     sample_gp_hyperposterior,
 )
+from src.distributed import (
+    AsyncBayesOptCoordinator,
+    DistributedConfig,
+    DistributedResult,
+    EvaluationRecord,
+)
 from src.sparse_gp import SparseGPRegressor, greedy_inducing_init
 
 __all__ = [
@@ -25,5 +31,9 @@ __all__ = [
     "MCMCResult",
     "sample_gp_hyperposterior",
     "potential_scale_reduction",
+    "AsyncBayesOptCoordinator",
+    "DistributedConfig",
+    "DistributedResult",
+    "EvaluationRecord",
 ]
-__version__ = "0.3.0"
+__version__ = "0.4.0"
